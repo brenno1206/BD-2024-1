@@ -34,7 +34,7 @@ inner join produtos_armazens as pa
 on pa.produto = p.id_produto
 inner join armazens as a
 on a.id_armazem = pa.armazem
-where cidade like 'São Paulo';
+where cidade_armazem like '%São Paulo%';
 
 #7. Listar todos os armazéns, ordenados pelo nome do armazém de A a Z.
 

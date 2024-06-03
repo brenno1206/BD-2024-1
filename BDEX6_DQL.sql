@@ -1,3 +1,5 @@
+
+
 use BDEX6_CINEMA;
 #1. Criar uma consulta para exibir todas as informações da tabela ESPECTADORES.
 select * from espectadores;
@@ -85,11 +87,26 @@ inner join filmes as f
 on se.filme = f.id_filme
 where tempo_filme < 90;
 #15. Mostrar o nome do filme e a data da sessão para todas as sessões agendadas para o próximo sábado.
-select f.nome_filme, i.data_ing
-from filmes as f
-inner join sessoes as se
-on f.id_filme = se.filme
-inner join ingressos as i
-on se.id_sessao = i.sessao
-where DAYOFWEEK(i.data_ing) = 7;
+select base.filme
+from 
+    (
+    select f.nome_filme as filme,
+    i.data_ing as sessao,
+    case
+	    when dayofweek(curdate()) = 7 then date_add(curdate(), interval 7 day)
+        when dayofweek(curdate()) = 1 then date_add(curdate(), interval 6 day)
+        when dayofweek(curdate()) = 2 then date_add(curdate(), interval 5 day)
+        when dayofweek(curdate()) = 3 then date_add(curdate(), interval 4 day)
+        when dayofweek(curdate()) = 4 then date_add(curdate(), interval 3 day)
+        when dayofweek(curdate()) = 5 then date_add(curdate(), interval 2 day)
+        when dayofweek(curdate()) = 6 then date_add(curdate(), interval 1 day)
+    end as dia
+    from filmes as f
+    inner join sessoes as se
+    on f.id_filme = se.filme
+    inner join ingressos as i
+    on se.id_sessao = i.sessao
+    ) as base
+    where sessao = dia;
+
 -- Não é o próximo sábado, talvez substituir pela data do próximo sabádo

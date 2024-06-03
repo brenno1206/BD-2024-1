@@ -80,16 +80,18 @@ where valor_saldo < 0;
 select sum(base.quantia)
 from
    (select
-   s.valor_saldo as quantia,
-   CASE
-        WHEN DAYOFWEEK(LAST_DAY(curdate())) = 7 THEN LAST_DAY(curdate()) - INTERVAL 1 DAY
-        WHEN DAYOFWEEK(LAST_DAY(curdate())) = 1 THEN LAST_DAY(curdate()) - INTERVAL 2 DAY 
-        ELSE LAST_DAY(curdate())
-        end as dia_util
+   t.valor as quantia,
+   case
+        when dayofweek(curdate()) = 7 then date_sub(curdate(), interval 1 day)
+        when dayofweek(curdate()) = 1 then date_sub(curdate(), interval 2 day)
+        else dayofweek(curdate())
+        end as dia_util,
+        dayofweek(data_saldo) as dia
    from usuarios as u
 left join transacoes as t
 on u.id_user = t.usuario
 left join contas as c
 on t.agencia = c.agencia and t.conta = c.conta and t.cod_banco = c.cod_banco
 left join saldos as s
-on c.agencia = s.agencia and c.conta = s.conta and c.cod_banco = s.cod_banco) as base;
+on c.agencia = s.agencia and c.conta = s.conta and c.cod_banco = s.cod_banco) as base
+where base.dia_util = base.dia;
