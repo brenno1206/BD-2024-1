@@ -145,33 +145,12 @@ on
 where
 	valor_saldo < 0;
 #15. Mostrar o valor total de transações de débito realizadas no último dia útil.
-select
-	sum(base.quantia), base.dia
-from
-   (select
-	t.valor as quantia,
-	case
-		when dayofweek(curdate()) = 7 then date_sub(curdate(), interval 1 day)
-        when dayofweek(curdate()) = 1 then date_sub(curdate(), interval 2 day)
-        when dayofweek(curdate()) = 2 then date_sub(curdate(), interval 3 day)
-        else dayofweek(curdate())
-        end as dia_util,
-        dayofweek(data_saldo) as dia
-	from 
-		usuarios as u
-	left join 
-		transacoes as t
-	on
-		u.id_user = t.usuario
-	left join
-		contas as c
-	on 
-		t.agencia = c.agencia and t.conta = c.conta and t.cod_banco = c.cod_banco
-	left join
-		saldos as s
-	on 
-		c.agencia = s.agencia and c.conta = s.conta and c.cod_banco = s.cod_banco) 
-	as 
-		base
-where 
-	base.dia_util = base.dia;
+	
+DESC SALDOS;
+SELECT T.*
+FROM TRANSACOES T
+JOIN
+SALDOS S ON T.AGENCIA = S.AGENCIA
+AND T.CONTA = S.CONTA
+AND T.COD_BANCO = S.COD_BANCO
+WHERE T.NATUREZA = 'DEBITO' AND DATA_SALDO = CURDATE()-1;
