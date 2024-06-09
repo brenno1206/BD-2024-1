@@ -87,26 +87,15 @@ inner join filmes as f
 on se.filme = f.id_filme
 where tempo_filme < 90;
 #15. Mostrar o nome do filme e a data da sessão para todas as sessões agendadas para o próximo sábado.
-select base.filme
-from 
-    (
-    select f.nome_filme as filme,
-    i.data_ing as sessao,
-    case
-	    when dayofweek(curdate()) = 7 then date_add(curdate(), interval 7 day)
-        when dayofweek(curdate()) = 1 then date_add(curdate(), interval 6 day)
-        when dayofweek(curdate()) = 2 then date_add(curdate(), interval 5 day)
-        when dayofweek(curdate()) = 3 then date_add(curdate(), interval 4 day)
-        when dayofweek(curdate()) = 4 then date_add(curdate(), interval 3 day)
-        when dayofweek(curdate()) = 5 then date_add(curdate(), interval 2 day)
-        when dayofweek(curdate()) = 6 then date_add(curdate(), interval 1 day)
-    end as dia
-    from filmes as f
-    inner join sessoes as se
-    on f.id_filme = se.filme
-    inner join ingressos as i
-    on se.id_sessao = i.sessao
-    ) as base
-    where sessao = dia;
+DESC INGRESSOS;
+REPLACE INTO INGRESSOS VALUES (12,'2024-06-08','12:00:00',1,2);
 
--- Não é o próximo sábado, talvez substituir pela data do próximo sabádo
+SELECT FIL.NOME_FILME, ING.DATA_ING
+FROM INGRESSOS ING
+JOIN SESSOES SS ON SS.ID_SESSAO = ING.SESSAO
+JOIN FILMES FIL ON SS.FILME = FIL.ID_FILME
+WHERE DAYOFWEEK(ING.DATA_ING) = 7 
+AND ING.DATA_ING <= (CURDATE()+7)
+AND ING.DATA_ING > CURDATE();
+# DAYOFWEEK - RETORNA UM INTEIRO CORRESPONDENTE AO DIA 1-7 | DOMINGO = 1
+# CURDATE()+7 - RETORNA O DIA DE HOJE SOMADO + SETE DIAS (SEMANA)
